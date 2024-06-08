@@ -12,9 +12,9 @@ app.get('/numbers/:id', async (req, res) => {
     const { id } = req.params
     if (id != 'p' && id != 'e' && id != 'r' && id != 'f') return res.status(404).json({ msg: "Please give a vaild id!" })
     try {
-        if(id == 'p') typeofnumbers = 'primes'
-        else if(id == 'f') typeofnumbers = 'fibo'
-        else if(id == 'e') typeofnumbers = 'even'
+        if (id == 'p') typeofnumbers = 'primes'
+        else if (id == 'f') typeofnumbers = 'fibo'
+        else if (id == 'e') typeofnumbers = 'even'
         else typeofnumbers = 'rand'
         const resp = await axios.get(`${process.env.ENDPOINT}/test/${typeofnumbers}`, {
             headers: {
@@ -22,13 +22,29 @@ app.get('/numbers/:id', async (req, res) => {
             }
         })
         var windowPrevState = [...window]
-        var {numbers} = resp.data
+        var { numbers } = resp.data
         let unique = numbers.reduce(function (acc, curr) {
             if (!acc.includes(curr))
                 acc.push(curr);
             return acc;
         }, []);
 
+        unique.forEach(num => {
+            if (!window.includes(num)) {
+                if (window.length >= 10) { // Assuming window size to be 10
+                    window.shift();        // deleting previous old numbers
+                }
+                window.push(num);
+            }
+        });
+        var windowCurrState = [...window];
+
+        res.send({
+            numbers: unique,
+            windowPrevState,
+            windowCurrState,
+            avg: 5, 
+        });
     }
     catch (err) {
         console.log(err);
