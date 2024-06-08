@@ -39,7 +39,7 @@ app.get('/numbers/:id', async (req, res) => {
         });
         var windowCurrState = [...window];
 
-        res.send({
+        res.status(200).json({
             numbers: unique,
             windowPrevState,
             windowCurrState,
